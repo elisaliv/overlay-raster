@@ -1,17 +1,20 @@
 """Read a raster data file with rasterio and overlay it on folium with appropriate
 coloring.
-I set the plasma colormap as default in both functions (display on map or
-just plot data), please change it depending on what you like and need.
+I set the OrRd colormap as default in both functions (display on map or just plot
+data), please change it depending on what you like and need.
+Just make sure to use a matplotlib *linear* colormap and the corresponding branca
+*_09 colormap.
 
 IMPORTANT: this code works fine for input data with EPSG:4326 CRS (coordinate reference
 system). The data should be projected on this CRS before displaying it on a map.
 
-elisaliv, 7-Sep-2020
+elisaliv, 9-Sep-2020
 """
 
 import numpy as np
 import rasterio as rio
 import folium
+import branca
 import matplotlib.pyplot as plt
 from matplotlib import cm, colors
 
@@ -45,7 +48,7 @@ def data_extent(data):
 minmax = data_extent(data_name)
 
 
-def color_data(data, data_extent, cmap_obj=cm.plasma):
+def color_data(data, data_extent, cmap_obj=cm.OrRd):
     # Prepare colored and normalized data to be overlayed on map
     norm = colors.Normalize(vmin=data_extent[0], vmax=data_extent[1])
     data_color = cmap_obj(norm(data))
@@ -55,7 +58,7 @@ def color_data(data, data_extent, cmap_obj=cm.plasma):
 data_name_color = color_data(data_name, minmax)
 
 
-def folium_overlay(data_color, coord_extent, map_path):
+def folium_overlay(data_color, coord_extent, data_extent, map_path):
     # Overlay raster data on folium map
     # folium options should be changed inside this function (e.g. opacity)
     lat, lon = coord_extent
@@ -65,9 +68,14 @@ def folium_overlay(data_color, coord_extent, map_path):
             data_color,
             bounds=[[lat.min(), lon.min()], [lat.max(), lon.max()]],
             mercator_project=True,
-            opacity=0.7,
+            opacity=0.9,
         )
     )
+    # Add colorbar using a LinearColormap object (must be created with branca)
+    cmbranca = branca.colormap.linear.OrRd_09.scale(vmin=data_extent[0],
+                                                    vmax=data_extent[1])
+    cmbranca.caption = '<data name [unit]>'
+    cmbranca.add_to(m)
     m.save(map_path)
 
 
@@ -75,7 +83,7 @@ folium_overlay(data_name_color, coords, "map.html")
 # Last arg is where the map will be stored locally
 
 
-def plot_data(data, coord_extent, data_extent, cmap_str="plasma"):
+def plot_data(data, coord_extent, data_extent, cmap_str="OrRd"):
     # Simply plot the data adjusting coordinate labels and normalizing colormap
     lat, lon = coord_extent
     plt.imshow(data, cmap=cmap_str, extent=(lon.min(), lon.max(), lat.min(), lat.max()))
