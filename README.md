@@ -3,7 +3,9 @@
 Read a raster data file with rasterio and overlay it on folium with appropriate
 coloring.
 
-# TODO
+The core function to this end is `raster_overlay()` inside `overlay_raster/map_data.py`.
+
+## TODO
 
 * Add projection function and check if data has the correct CRS before overlaying it on
   the map
