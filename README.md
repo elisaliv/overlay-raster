@@ -3,7 +3,7 @@
 Read a raster data file with rasterio and overlay it on folium with appropriate
 coloring.
 
-The core function to this end is `raster_overlay` inside overlay_raster/map_data.py.
+The core function to this end is `raster_overlay` inside `overlay_raster/map_data.py`.
 
 ## TODO
 
