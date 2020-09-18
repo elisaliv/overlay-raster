@@ -17,8 +17,8 @@ def read_raster(filepath):
     Returns:
         np.array, list: array containing the data,
             list with coordinate extent of data in the form
-            [np.array([left_latitude, right_latitude]),
-             np.array(bottom_longitude, top_longitude)]
+            [np.array([bottom_latitude, top_latitude]),
+             np.array(left_longitude, right_longitude)]
     """
     src = rio.open(filepath)
     data = src.read(1)  # read first band
